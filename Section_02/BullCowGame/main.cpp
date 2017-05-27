@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include "main.h"
 #include "FBullCowGame.h"
 
@@ -20,45 +21,62 @@ int32 main() {
 
 void printIntro() {
 
-	std::cout << "Welcome to Bulls and Cows biatch!" << std::endl;
+	std::cout << "Welcome to Bulls and Cows!" << std::endl;
 	std::cout << "Guess the " << WORD_LENGTH << " letter word isogram" << std::endl;
 
 	FText username = "";
 	std::cout << std::endl << "Please tell me your name: ";
 	std::getline(std::cin, username);
 
-	std::cout << std::endl << "So... your name is " << username << ". Nice name biatch!" << std::endl;
-
 }
 
 void playGame() {
-	
+
 	std::cout << "Let's begin with the game then..." << std::endl << std::endl;
 
-	for (int32 i = 0; i < BCGame.GetMaxTries(); i++) {
+	bool gameWon = false;
+
+	while (!gameWon && BCGame.GetCurrentTry() <= BCGame.GetMaxTries()) {
 		FText Guess = getGuess();
 		std::cout << "Your guess was " << Guess << std::endl;
-		
-		if (BCGame.CheckGuessValidity(Guess)) {
-			
+
+		switch (BCGame.CheckGuessValidity(Guess)) {
+
+		case EGuessValidity::OK: {
+
 			BullCowCount counter = BCGame.SubmitGuess(Guess);
 			std::cout << " BULLS: " << counter.Bulls << " Cows: " << counter.Cows << std::endl;
-			
+
 			if (BCGame.IsGameWon(counter)) {
-				std::cout << "YOU FUCKING WON!!!!!!!!!!!!!!!" << std::endl;
+				std::cout << "YOU ARE A WINNER!" << std::endl;
+				gameWon = true;
 				break;
 			}
 			else {
 				if (BCGame.GetCurrentTry() > BCGame.GetMaxTries()) {
-					std::cout << "YOU ARE A LOOSER BIATCH!!" << std::endl;
+					std::cout << "YOU ARE A LOOSER!" << std::endl;
 					break;
 				}
 			}
+
+			break;
 		}
-		else {
+
+		case EGuessValidity::NOT_AN_ISOGRAM: {
+			std::cout << "Guess is not an isogram" << std::endl;
+			break;
+		}
+
+		case EGuessValidity::WRONG_LENGTH: {
 			std::cout << "Invalid guess length" << std::endl;
+			break;
 		}
-		
+
+		default: {
+			std::cout << "Invalid just because" << std::endl;
+			break;
+		}
+		}
 	}
 }
 
@@ -67,6 +85,7 @@ FText getGuess() {
 	std::cout << std::endl << "Try " << BCGame.GetCurrentTry() << ". Tell me what's your guess: ";
 	FText guess = "";
 	std::getline(std::cin, guess);
+	std::transform(guess.begin(), guess.end(), guess.begin(), ::tolower);
 
 	return guess;
 }

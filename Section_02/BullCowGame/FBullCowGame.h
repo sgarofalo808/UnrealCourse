@@ -10,19 +10,27 @@ struct BullCowCount {
 	int32 Cows = 0;
 };
 
+enum class EGuessValidity {
+	OK,
+	WRONG_LENGTH,
+	NOT_AN_ISOGRAM
+};
+
 class FBullCowGame {
 
-public:	
+public:
 	FBullCowGame();
 	void Reset();
 	int32 GetMaxTries() const;
-	int32 GetCurrentTry() const;	
+	int32 GetCurrentTry() const;
 	bool IsGameWon(BullCowCount) const;
-	bool CheckGuessValidity(FString);
+	EGuessValidity CheckGuessValidity(FString);
 	BullCowCount SubmitGuess(FString);
 
 private:
 	int32 MyCurrentTry;
 	FString MyCurrentWord;
+
+	bool IsIsogram(FString) const;
 
 };
