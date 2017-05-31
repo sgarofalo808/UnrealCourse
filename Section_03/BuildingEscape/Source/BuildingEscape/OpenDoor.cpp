@@ -42,7 +42,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (!bDoorOpen && PressurePlate != nullptr) {
-		if (PressurePlate->IsOverlappingActor(PlayerPawn)) {			
+		if (GetTotalMassInPlate() > 50.f) {
 			OpenDoor();
 		}
 	}
@@ -50,11 +50,23 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (bDoorOpen && (GetWorld()->GetTimeSeconds()  - LastOpenDoorTime) > OpenDoorDelay) {
 		CloseDoor();
 	}
+
+}
+
+float UOpenDoor::GetTotalMassInPlate() {
 	
-	/*
-	FRotator NewRotation = Owner->GetActorRotation();
-	NewRotation.Add(0.0f, 0.1f, 0.0f);
-	Owner->SetActorRotation(NewRotation);
-	*/
+	float TotalWeight = 0.f;
+
+	TArray<AActor*> OutOverlappingActors;
+
+	PressurePlate->GetOverlappingActors(OutOverlappingActors);
+
+	for (AActor* Actor : OutOverlappingActors) {
+		TotalWeight += Actor->GetRootPrimitiveComponent()->GetMass();
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("Weight in pressure plate is %f and there are %i ActorsOverlapping"), TotalWeight, OutOverlappingActors.Num());
+
+	return TotalWeight;
 }
 

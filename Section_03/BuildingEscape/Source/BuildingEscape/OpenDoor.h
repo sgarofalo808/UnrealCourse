@@ -36,6 +36,8 @@ private:
 	bool bDoorOpen = false;
 	float LastOpenDoorTime = 0.0f;
 
+	float GetTotalMassInPlate();
+
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PressurePlate;
 
