@@ -47,9 +47,9 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 			if (GetTotalMassInPlate() >= 30.f) {
 				OpenDoor();
 			}
-			else if ((GetWorld()->GetTimeSeconds() - LastOpenDoorTime) > OpenDoorDelay) {
-				CloseDoor();
-			}
+		}
+		else if (GetTotalMassInPlate() < 30.f && (GetWorld()->GetTimeSeconds() - LastOpenDoorTime) > OpenDoorDelay) {
+			CloseDoor();
 		}
 	}
 }
