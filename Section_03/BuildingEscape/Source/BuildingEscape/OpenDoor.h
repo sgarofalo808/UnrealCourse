@@ -30,8 +30,8 @@ public:
 
 private:
 	
-	AActor* Owner;
-	AActor* PlayerPawn;
+	AActor* Owner = nullptr;
+	AActor* PlayerPawn = nullptr;
 
 	bool bDoorOpen = false;
 	float LastOpenDoorTime = 0.0f;
@@ -39,7 +39,7 @@ private:
 	float GetTotalMassInPlate();
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
+	ATriggerVolume* PressurePlate = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	float OpenDoorDelay = 3.0f;

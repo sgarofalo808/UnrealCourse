@@ -22,7 +22,7 @@ void UOpenDoor::BeginPlay()
 }
 
 void UOpenDoor::OpenDoor()
-{	
+{
 	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f);
 	Owner->SetActorRotation(NewRotation);
 	LastOpenDoorTime = GetWorld()->GetTimeSeconds();
@@ -30,7 +30,7 @@ void UOpenDoor::OpenDoor()
 }
 
 void UOpenDoor::CloseDoor()
-{	
+{
 	FRotator NewRotation = FRotator(0.0f, 0.0f, 0.0f);
 	Owner->SetActorRotation(NewRotation);
 	bDoorOpen = false;
@@ -41,31 +41,34 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bDoorOpen && PressurePlate != nullptr) {
-		if (GetTotalMassInPlate() > 50.f) {
-			OpenDoor();
+	if (PressurePlate != nullptr)
+	{
+		if (!bDoorOpen) {
+			if (GetTotalMassInPlate() >= 30.f) {
+				OpenDoor();
+			}
+			else if ((GetWorld()->GetTimeSeconds() - LastOpenDoorTime) > OpenDoorDelay) {
+				CloseDoor();
+			}
 		}
 	}
-
-	if (bDoorOpen && (GetWorld()->GetTimeSeconds()  - LastOpenDoorTime) > OpenDoorDelay) {
-		CloseDoor();
-	}
-
 }
 
 float UOpenDoor::GetTotalMassInPlate() {
-	
+
 	float TotalWeight = 0.f;
 
 	TArray<AActor*> OutOverlappingActors;
 
-	PressurePlate->GetOverlappingActors(OutOverlappingActors);
+	if (PressurePlate != nullptr) {
+		PressurePlate->GetOverlappingActors(OutOverlappingActors);
 
-	for (AActor* Actor : OutOverlappingActors) {
-		TotalWeight += Actor->GetRootPrimitiveComponent()->GetMass();
+		for (AActor* Actor : OutOverlappingActors) {
+			TotalWeight += Actor->GetRootPrimitiveComponent()->GetMass();
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Weight in pressure plate is %f and there are %i ActorsOverlapping"), TotalWeight, OutOverlappingActors.Num());
 	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("Weight in pressure plate is %f and there are %i ActorsOverlapping"), TotalWeight, OutOverlappingActors.Num());
 
 	return TotalWeight;
 }

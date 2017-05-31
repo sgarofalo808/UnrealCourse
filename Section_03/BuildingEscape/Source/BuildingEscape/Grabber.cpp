@@ -38,6 +38,8 @@ void UGrabber::BeginPlay()
 
 void UGrabber::Grab() {
 
+	if (PhysicsHandle == nullptr) { return; }
+
 	AActor* HitActor = GetPhysicalBodyHit();
 
 	if (HitActor == nullptr) {
@@ -69,7 +71,10 @@ void UGrabber::Release() {
 
 	UE_LOG(LogTemp, Warning, TEXT("Grab released"));
 
-	PhysicsHandle->ReleaseComponent();
+	if (PhysicsHandle != nullptr) {
+		PhysicsHandle->ReleaseComponent();
+	}
+	
 }
 
 
@@ -87,9 +92,9 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	/// Line trace or ray cast
 	FVector LineTracerEnd = PlayerLocation + PlayerRotation.Vector() * PlayerReach;
-	DrawDebugLine(GetWorld(), PlayerLocation, LineTracerEnd, FColor(255, 0, 0), false, 0.f, 0.f, 3.f);
+	//DrawDebugLine(GetWorld(), PlayerLocation, LineTracerEnd, FColor(255, 0, 0), false, 0.f, 0.f, 3.f);
 
-	if (PhysicsHandle->GrabbedComponent) {
+	if (PhysicsHandle != nullptr && PhysicsHandle->GrabbedComponent) {
 		PhysicsHandle->SetTargetLocation(GetArmVector());
 	}
 

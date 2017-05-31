@@ -28,11 +28,10 @@ public:
 	void Release();
 
 private:
-	AActor* Owner;
 	float PlayerReach = 100.f;
+	AActor* Owner = nullptr;	
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	UInputComponent* InputComponent = nullptr;
-
 	AActor* GrabbedActor = nullptr;
 
 	AActor* GetPhysicalBodyHit();
